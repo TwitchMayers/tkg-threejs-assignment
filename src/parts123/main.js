@@ -82,40 +82,13 @@ checkerTexture.wrapT = THREE.RepeatWrapping;
 checkerTexture.repeat.set(2, 2);
 checkerTexture.colorSpace = THREE.SRGBColorSpace;
 
-function createPlaneGeometry() {
-  const vertices = new Float32Array([
-    -18, 0, -18,
-    18, 0, -18,
-    18, 0, 18,
-    -18, 0, -18,
-    18, 0, 18,
-    -18, 0, 18,
-  ]);
-
-  const normals = new Float32Array([
-    0, 1, 0,
-    0, 1, 0,
-    0, 1, 0,
-    0, 1, 0,
-    0, 1, 0,
-    0, 1, 0,
-  ]);
-
-  const uvs = new Float32Array([
-    0, 0,
-    6, 0,
-    6, 6,
-    0, 0,
-    6, 6,
-    0, 6,
-  ]);
-
-  const geometry = new THREE.BufferGeometry();
-  geometry.setAttribute('position', new THREE.BufferAttribute(vertices, 3));
-  geometry.setAttribute('normal', new THREE.BufferAttribute(normals, 3));
-  geometry.setAttribute('uv', new THREE.BufferAttribute(uvs, 2));
-  return geometry;
-}
+const floor = new THREE.Mesh(
+  new THREE.PlaneGeometry(36, 36, 40, 40),
+  new THREE.MeshStandardMaterial({ color: 0x1f2937, roughness: 0.95, metalness: 0.03 }),
+);
+floor.rotation.x = -Math.PI / 2;
+floor.receiveShadow = true;
+scene.add(floor);
 
 function createPyramidGeometry() {
   const vertices = new Float32Array([
@@ -131,13 +104,6 @@ function createPyramidGeometry() {
   geometry.computeVertexNormals();
   return geometry;
 }
-
-const floor = new THREE.Mesh(
-  createPlaneGeometry(),
-  new THREE.MeshStandardMaterial({ color: 0x1f2937, roughness: 0.95, metalness: 0.03 }),
-);
-floor.receiveShadow = true;
-scene.add(floor);
 
 const texturedCube = new THREE.Mesh(
   new THREE.BoxGeometry(2.5, 2.5, 2.5),
@@ -161,6 +127,43 @@ pyramid.position.set(0.5, 0, -4.2);
 pyramid.castShadow = true;
 pyramid.receiveShadow = true;
 scene.add(pyramid);
+
+const glslMaterial = new THREE.ShaderMaterial({
+  uniforms: {
+    uTime: { value: 0 },
+  },
+  vertexShader: `
+    uniform float uTime;
+    varying vec2 vUv;
+    varying float vWave;
+
+    void main() {
+      vUv = uv;
+      float wave = sin(position.y * 6.0 + uTime * 3.0) * 0.18;
+      vec3 displaced = position + normal * wave;
+      vWave = wave;
+      gl_Position = projectionMatrix * modelViewMatrix * vec4(displaced, 1.0);
+    }
+  `,
+  fragmentShader: `
+    varying vec2 vUv;
+    varying float vWave;
+
+    void main() {
+      vec3 c1 = vec3(0.16, 0.80, 0.95);
+      vec3 c2 = vec3(0.98, 0.44, 0.20);
+      float stripes = 0.5 + 0.5 * sin(vUv.y * 42.0 + vWave * 11.0);
+      vec3 color = mix(c1, c2, stripes);
+      gl_FragColor = vec4(color, 1.0);
+    }
+  `,
+});
+
+const glslSphere = new THREE.Mesh(new THREE.SphereGeometry(1.4, 64, 64), glslMaterial);
+glslSphere.position.set(0, 2.2, 0.3);
+glslSphere.castShadow = true;
+glslSphere.receiveShadow = true;
+scene.add(glslSphere);
 
 const torus = new THREE.Mesh(
   new THREE.TorusKnotGeometry(1.1, 0.34, 140, 24),
@@ -505,8 +508,13 @@ handleResize();
 
 setStatus('Загрузите .obj или .glb модель, затем выберите объект для трансформации.');
 
+const clock = new THREE.Clock();
+
 function animate() {
   requestAnimationFrame(animate);
+
+  const elapsed = clock.getElapsedTime();
+  glslMaterial.uniforms.uTime.value = elapsed;
 
   torus.rotation.x += 0.003;
   torus.rotation.y += 0.004;
