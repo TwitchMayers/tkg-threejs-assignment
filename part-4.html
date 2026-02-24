@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Three.js — Часть 4</title>
+    <link rel="stylesheet" href="./src/styles/common.css" />
+  </head>
+  <body>
+    <main class="page app-shell">
+      <aside class="panel">
+        <h1>Часть 4: CIELAB визуализатор</h1>
+        <p>sRGB в пространстве CIELAB (D65, 2°), с добавлением пользовательских точек.</p>
+        <a href="./index.html">← Назад</a>
+
+        <section class="section">
+          <h2>Добавить sRGB точку (макс. 4)</h2>
+          <div class="inline-3">
+            <label>
+              R
+              <input id="rInput" type="number" min="0" max="255" value="255" />
+            </label>
+            <label>
+              G
+              <input id="gInput" type="number" min="0" max="255" value="60" />
+            </label>
+            <label>
+              B
+              <input id="bInput" type="number" min="0" max="255" value="60" />
+            </label>
+          </div>
+          <button id="addPointBtn" type="button" style="margin-top: 10px">Добавить точку</button>
+          <button id="removePointBtn" class="secondary" type="button" style="margin-top: 8px">Удалить выбранную</button>
+          <div class="note">Точку можно выделить кликом по сцене или через список ниже.</div>
+          <label style="margin-top: 10px">
+            Выбранная точка
+            <select id="pointSelect">
+              <option value="">— не выбрана —</option>
+            </select>
+          </label>
+          <div id="labStatus" class="status"></div>
+        </section>
+
+        <section class="section">
+          <h2>ΔE76 между всеми парами</h2>
+          <table>
+            <thead>
+              <tr>
+                <th>Пара</th>
+                <th>ΔE76</th>
+              </tr>
+            </thead>
+            <tbody id="deltaTableBody"></tbody>
+          </table>
+        </section>
+      </aside>
+
+      <section class="viewport-wrap">
+        <div id="labViewport" class="viewport"></div>
+      </section>
+    </main>
+
+    <script type="module" src="./src/part4/main.js"></script>
+  </body>
+</html>

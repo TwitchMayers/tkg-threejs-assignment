@@ -76,7 +76,7 @@ const hemisphere = new THREE.HemisphereLight(0x88ccee, 0x553311, 0.28);
 scene.add(hemisphere);
 
 const textureLoader = new THREE.TextureLoader();
-const checkerTexture = textureLoader.load('/textures/checker.svg');
+const checkerTexture = textureLoader.load(`${import.meta.env.BASE_URL}textures/checker.svg`);
 checkerTexture.wrapS = THREE.RepeatWrapping;
 checkerTexture.wrapT = THREE.RepeatWrapping;
 checkerTexture.repeat.set(2, 2);
