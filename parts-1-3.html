@@ -3,14 +3,14 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Three.js — Часть 1</title>
+    <title>Three.js — Части 1–2</title>
     <link rel="stylesheet" href="/src/styles/common.css" />
   </head>
   <body>
     <main class="page app-shell">
       <aside class="panel">
-        <h1>Часть 1</h1>
-        <p>Базовая интерактивная 3D-сцена на Three.js.</p>
+        <h1>Части 1–2</h1>
+        <p>Сцена с освещением, загрузкой моделей и трансформациями.</p>
         <a href="/">← Назад</a>
 
         <section class="section">
@@ -33,11 +33,61 @@
               <input id="texturedColor" type="color" value="#ffffff" />
             </label>
           </div>
+        </section>
+
+        <section class="section">
+          <h2>Загрузка моделей</h2>
+          <div class="controls-grid">
+            <label>
+              Файл (.glb или .obj)
+              <input id="modelInput" type="file" accept=".glb,.obj" />
+            </label>
+            <p class="note">Также поддерживается drag-n-drop в область сцены.</p>
+            <label>
+              Выбор объекта
+              <select id="objectList">
+                <option value="">— выберите объект —</option>
+              </select>
+            </label>
+          </div>
+        </section>
+
+        <section class="section">
+          <h2>Режим трансформации</h2>
+          <div class="inline-3">
+            <button class="secondary" type="button" data-transform-mode="translate">Move</button>
+            <button class="secondary" type="button" data-transform-mode="rotate">Rotate</button>
+            <button class="secondary" type="button" data-transform-mode="scale">Scale</button>
+          </div>
+          <div class="controls-grid" style="margin-top: 10px">
+            <label>Позиция (x y z)
+              <div class="inline-3">
+                <input id="posX" type="number" step="0.1" />
+                <input id="posY" type="number" step="0.1" />
+                <input id="posZ" type="number" step="0.1" />
+              </div>
+            </label>
+            <label>Поворот в градусах (x y z)
+              <div class="inline-3">
+                <input id="rotX" type="number" step="1" />
+                <input id="rotY" type="number" step="1" />
+                <input id="rotZ" type="number" step="1" />
+              </div>
+            </label>
+            <label>Масштаб (x y z)
+              <div class="inline-3">
+                <input id="scaleX" type="number" step="0.1" min="0.1" />
+                <input id="scaleY" type="number" step="0.1" min="0.1" />
+                <input id="scaleZ" type="number" step="0.1" min="0.1" />
+              </div>
+            </label>
+          </div>
           <div id="status" class="status"></div>
         </section>
       </aside>
 
       <section class="viewport-wrap">
+        <div id="dropHint" class="drop-hint">Отпустите .glb или .obj для загрузки</div>
         <div id="viewport" class="viewport"></div>
       </section>
     </main>
